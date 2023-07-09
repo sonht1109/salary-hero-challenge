@@ -1,0 +1,16 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: salary_hero_db
+    image: postgres:${DATABASE_VERSION}
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DATABASE_USERNAME}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+      - POSTGRES_DB=${DATABASE_NAME}
+    volumes:
+      - ./pgdata/makita_db:/var/lib/postgresql/data
+    ports:
+      - ${DATABASE_PORT}:5432
