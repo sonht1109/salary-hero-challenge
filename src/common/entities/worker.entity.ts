@@ -1,17 +1,16 @@
 import { BaseEntity } from './base.entity';
-import { EnumWorkerType } from 'src/common/enums';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { CompanyEntity } from './company.entity';
 
 @Entity({ name: 'worker' })
 export class WorkerEntity extends BaseEntity {
   @Column({ name: 'name' })
   name: string;
 
-  @Column({
-    name: 'type',
-    type: 'enum',
-    enum: EnumWorkerType,
-    default: EnumWorkerType.MONTHLY,
-  })
-  type: EnumWorkerType;
+  @ManyToOne(() => CompanyEntity)
+  @JoinColumn({ name: 'company_id' })
+  company: CompanyEntity;
+
+  @Column({ name: 'company_id' })
+  companyId: string;
 }

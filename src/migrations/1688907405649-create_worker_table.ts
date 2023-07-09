@@ -1,4 +1,3 @@
-import { EnumWorkerType } from '../common/enums';
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateWorkerTable1688907405649 implements MigrationInterface {
@@ -18,13 +17,6 @@ export class CreateWorkerTable1688907405649 implements MigrationInterface {
             name: 'name',
             type: 'varchar',
             isNullable: false,
-          },
-          {
-            name: 'type',
-            type: 'varchar(30)',
-            isNullable: false,
-            enum: [EnumWorkerType.DAILY, EnumWorkerType.MONTHLY],
-            default: `'${EnumWorkerType.MONTHLY}'`,
           },
           {
             name: 'base_salary',
