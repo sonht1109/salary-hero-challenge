@@ -8,10 +8,10 @@ export class CreateWorkerTable1688907405649 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            isPrimary: true,
+            type: 'varchar',
+            length: '36',
             isUnique: true,
             generationStrategy: 'uuid',
-            type: 'varchar',
           },
           {
             name: 'name',

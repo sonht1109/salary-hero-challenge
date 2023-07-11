@@ -13,4 +13,7 @@ export class WorkerEntity extends BaseEntity {
 
   @Column({ name: 'company_id' })
   companyId: string;
+
+  @Column({ name: 'base_salary' })
+  baseSalary: number;
 }

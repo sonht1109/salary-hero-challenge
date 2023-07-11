@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSource } from 'src/common/configs/datasource';
 import { AttendanceEntity } from 'src/common/entities/attendance.entity';
 import { BalanceEntity } from 'src/common/entities/balance.entity';
+import { CompanyEntity } from 'src/common/entities/company.entity';
 import { WorkerEntity } from 'src/common/entities/worker.entity';
 import { DataSource, DataSourceOptions } from 'typeorm';
 
@@ -17,7 +18,12 @@ import { DataSource, DataSourceOptions } from 'typeorm';
         return dataSource;
       },
     }),
-    TypeOrmModule.forFeature([WorkerEntity, BalanceEntity, AttendanceEntity]),
+    TypeOrmModule.forFeature([
+      CompanyEntity,
+      WorkerEntity,
+      BalanceEntity,
+      AttendanceEntity,
+    ]),
   ],
   exports: [TypeOrmModule],
 })

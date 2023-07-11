@@ -18,7 +18,7 @@ cp .env.example .env
 ```
 
 ## Quick start
-- Initialize database container
+- Run database container
 ```bash
 docker compose up -d
 ```
@@ -28,8 +28,13 @@ docker compose down
 ```
 
 ## Running the app
+- Initial database schemas
 ```bash
-# Watch mode
+yarn migration:up
+```
+
+- Run your app in local environment
+```bash
 yarn run start:dev
 ```
 

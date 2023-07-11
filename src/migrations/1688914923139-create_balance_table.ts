@@ -8,10 +8,10 @@ export class CreateBalanceTable1688914923139 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            isPrimary: true,
+            type: 'varchar',
+            length: '36',
             isUnique: true,
             generationStrategy: 'uuid',
-            type: 'varchar',
           },
           {
             name: 'worker_id',

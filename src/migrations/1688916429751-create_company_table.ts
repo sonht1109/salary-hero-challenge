@@ -15,10 +15,10 @@ export class CreateCompanyTable1688916429751 implements MigrationInterface {
         columns: [
           {
             name: 'id',
-            isPrimary: true,
+            type: 'varchar',
+            length: '36',
             isUnique: true,
             generationStrategy: 'uuid',
-            type: 'varchar',
           },
           {
             name: 'name',

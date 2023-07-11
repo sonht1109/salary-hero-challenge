@@ -14,3 +14,16 @@ services:
       - ./pgdata/makita_db:/var/lib/postgresql/data
     ports:
       - ${DATABASE_PORT}:5432
+
+  redis:
+    container_name: salary_hero_redis
+    image: redis:alpine
+    restart: always
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    env_file:
+      - .env
+    environment:
+      - REDIS_PORT=${REDIS_PORT}
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
