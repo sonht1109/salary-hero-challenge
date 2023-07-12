@@ -15,8 +15,9 @@ Main solution is to scan company table, synchronously handle each company with q
 ![Flow](./docs/images/flow.png)
 - Every midnight, there is a [cronjob](./src/modules/balance/balance-job.service.ts) executed.
 - Cronjob scans company table, loops over all company records and pushs each company into queue.
-- On each queue, when [queue consumer](./src/modules/balance/balance-calc.consumer.ts) receives queue producer data, it scans woker table records which in the processing company. Then, queue consumer will handle the calculation of workers' balances by using Promise.all and batching requests (about 100 request per batch) to take advantage of datbase connection pools.
-- For example, there are 2 companies, A and B. A and B will be pushed into queue. When queue consumer processes company A, it will get all its workers, I suppose there are about 300 workers. Consumer will seperate 300 workers into 3 batches, each batch has 100 workers, and then loop over 3 batches to execute Promise.all on each batch. Company B will be handled in the same way
+- In each queue, when [queue consumer](./src/modules/balance/balance-calc.consumer.ts) receives queue producer data, it scans woker table records which in the processing company. Then, queue consumer will handle the calculation of workers' balances by using Promise.all and batching requests (about 100 request per batch) to take advantage of datbase connection pools.
+- For example, there are 2 companies, A and B. A and B will be pushed into queue. When queue consumer processes company A, it will get all its workers, we suppose there are about 300 workers. Consumer will seperate 300 workers into 3 batches, each batch has 100 workers, and then loop over 3 batches to execute Promise.all on each batch. Company B will be handled in the same way.
+- If this app runs with multiple instances, there is no need to worry about that some companies will be handled in duplicate, because each job in queue has its own UNIQUE id. If this id already exists in queue, it will not be re-pushed into queue again. We can take this advantage by using company id for job id.
 
 ### Design pattern
 Apply strategy pattern to calculate balances. [See interface](./src/modules/balance/interfaces/balance-calc.interface.ts)
