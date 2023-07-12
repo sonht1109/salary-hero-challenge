@@ -20,8 +20,8 @@ export class BalanceJobService {
    * job that run every midnight to handle balance update
    * you can update cronTime to run every 10s for testing
    */
-  // @Cron('00 00 * * *')
-  @Cron('*/30 * * * * *')
+  @Cron('00 00 * * *')
+  // @Cron('*/10 * * * * *')
   async updateBalances() {
     const startTime = startOfMonth(subDays(new Date(), 1));
     const endTime = endOfMonth(startTime);

@@ -64,9 +64,10 @@ export class BalanceCalcConsumer {
     const end = new Date();
 
     console.log(
-      `Job ${
-        BalanceCalcConsumer.name
-      } ${job.id.toString()} exec in ${differenceInMilliseconds(end, start)}ms`,
+      `Job ${job.id.toString()} exec in ${differenceInMilliseconds(
+        end,
+        start,
+      )}ms`,
     );
   }
 

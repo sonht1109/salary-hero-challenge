@@ -34,11 +34,11 @@ export class BalanceService {
   }
 
   /**
-   * calculate worker balance by time range
-   * @param worker
-   * @param startTime
-   * @param endTime
-   * @param method
+   * calculate worker's balance by time range
+   * @param worker {WorkerEntity}
+   * @param startTime {Date}
+   * @param endTime {Date}
+   * @param method {EnumCompanySalaryCalcMethod}
    * @returns
    */
   async calcWorkerBalance(
@@ -47,7 +47,7 @@ export class BalanceService {
     endTime: Date,
     method: EnumCompanySalaryCalcMethod,
   ) {
-    const totalAttendances = await this.attendanceRepo.count({
+    const attendanceCount = await this.attendanceRepo.count({
       where: {
         workerId: worker.id,
         checkinAt: MoreThanOrEqual(startTime),
@@ -56,7 +56,7 @@ export class BalanceService {
     });
     const amount = this.calcStrategies
       .get(method)
-      .calc(worker, totalAttendances);
+      .calc(worker, attendanceCount);
 
     let checkBalance = await this.balanceRepo.findOne({
       where: {
