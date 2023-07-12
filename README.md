@@ -33,7 +33,7 @@ Apply strategy pattern to calculate balances. [See interface](./src/modules/bala
 ### Installation
 - Install your project dependencies
 ```bash
-$ yarn install
+yarn install
 ```
 - Setup environment
 ```bash
@@ -71,7 +71,7 @@ yarn migration:create src/migrations/<file name>
 ```bash
 yarn migration:up
 ```
-- Revert those changes
+- Revert changes
 ```bash
 yarn migration:down
 ```
