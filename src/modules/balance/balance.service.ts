@@ -4,7 +4,7 @@ import { AttendanceEntity } from 'src/common/entities/attendance.entity';
 import { BalanceEntity } from 'src/common/entities/balance.entity';
 import { WorkerEntity } from 'src/common/entities/worker.entity';
 import { EnumCompanySalaryCalcMethod } from 'src/common/enums';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Equal, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { IBalanceCalcStrategy } from './interfaces/balance-calc.interface';
 import { BalanceDailyCalcStrategy } from './strategies/balance-daily-calc.strategy';
 import { BalanceMonthlyCalcStrategy } from './strategies/balance-monthlycalc.strategy';
@@ -33,6 +33,14 @@ export class BalanceService {
     );
   }
 
+  /**
+   * calculate worker balance by time range
+   * @param worker
+   * @param startTime
+   * @param endTime
+   * @param method
+   * @returns
+   */
   async calcWorkerBalance(
     worker: WorkerEntity,
     startTime: Date,
@@ -50,11 +58,15 @@ export class BalanceService {
       .get(method)
       .calc(worker, totalAttendances);
 
-    let currentBalance = await this.balanceRepo.findOne({
-      where: { workerId: worker.id, periodFrom: startTime, periodTo: endTime },
+    let checkBalance = await this.balanceRepo.findOne({
+      where: {
+        workerId: worker.id,
+        periodFrom: Equal(startTime),
+        periodTo: Equal(endTime),
+      },
     });
-    if (!currentBalance) {
-      currentBalance = this.balanceRepo.create({
+    if (!checkBalance) {
+      checkBalance = this.balanceRepo.create({
         worker,
         amount,
         periodFrom: startTime,
@@ -62,7 +74,7 @@ export class BalanceService {
       });
     }
 
-    currentBalance.amount = amount;
-    return await this.balanceRepo.save(currentBalance);
+    checkBalance.amount = amount;
+    return await this.balanceRepo.save(checkBalance);
   }
 }

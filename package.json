@@ -25,6 +25,7 @@
     "migration:down": "yarn run typeorm migration:revert"
   },
   "dependencies": {
+    "@nestjs/bull": "^10.0.1",
     "@nestjs/cache-manager": "^2.0.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
@@ -32,6 +33,7 @@
     "@nestjs/schedule": "^3.0.1",
     "@nestjs/swagger": "^7.1.1",
     "@nestjs/typeorm": "^10.0.0",
+    "bull": "^4.10.4",
     "cache-manager": "^5.2.3",
     "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",

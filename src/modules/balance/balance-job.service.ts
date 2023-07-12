@@ -1,68 +1,42 @@
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { differenceInMilliseconds, endOfMonth, startOfMonth } from 'date-fns';
-import { CompanyEntity } from 'src/common/entities/company.entity';
-import { WorkerEntity } from 'src/common/entities/worker.entity';
-import { Repository } from 'typeorm';
-import { BalanceService } from './balance.service';
 import { Cron } from '@nestjs/schedule';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Queue } from 'bull';
+import { endOfMonth, startOfMonth, subDays } from 'date-fns';
+import { CompanyEntity } from 'src/common/entities/company.entity';
+import { EnumQueueName } from 'src/common/enums';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BalanceJobService {
-  private readonly BATCH_SIZE = 100;
   constructor(
     @InjectRepository(CompanyEntity)
     private compantRepo: Repository<CompanyEntity>,
-    @InjectRepository(WorkerEntity)
-    private workerRepo: Repository<WorkerEntity>,
-    private balanceService: BalanceService,
+    @InjectQueue(EnumQueueName.BALANCE_CALC) private balanceCalcQueue: Queue,
   ) {}
 
+  /**
+   * job that run every midnight to handle balance update
+   * you can update cronTime to run every 10s for testing
+   */
   // @Cron('00 00 * * *')
-  @Cron('*/10 * * * * *')
+  @Cron('*/30 * * * * *')
   async updateBalances() {
-    const startTime = startOfMonth(new Date());
+    const startTime = startOfMonth(subDays(new Date(), 1));
     const endTime = endOfMonth(startTime);
     const companies = await this.compantRepo.find();
     for (const company of companies) {
       if (company) {
-        // todo: push queue - mark processing company
-        await this.updateBalancesByCompany(company, startTime, endTime);
+        await this.balanceCalcQueue.add(
+          { company, startTime, endTime },
+          {
+            jobId: `balance-calc--${company.id}`,
+            removeOnComplete: true,
+            removeOnFail: true,
+          },
+        );
       }
     }
-  }
-
-  async updateBalancesByCompany(
-    company: CompanyEntity,
-    startTime: Date,
-    endTime: Date,
-  ) {
-    let chunk = [];
-    const workers = await this.workerRepo.find({
-      where: { companyId: company.id },
-    });
-    const len = workers.length;
-
-    const start = new Date();
-    for (const worker of workers) {
-      chunk.push(
-        this.balanceService.calcWorkerBalance(
-          worker,
-          startTime,
-          endTime,
-          company.salaryCalcMethod,
-        ),
-      );
-      if (chunk.length % this.BATCH_SIZE === 0 || chunk.length === len) {
-        await Promise.all(chunk);
-        chunk = [];
-      }
-    }
-    const end = new Date();
-    console.log(
-      'Total exec time: ',
-      differenceInMilliseconds(end, start),
-      'ms',
-    );
   }
 }
